@@ -6,6 +6,8 @@ public class PlayerAimSystem : MonoBehaviour
 {
     private Camera m_camera;
     [SerializeField] private LayerMask m_layerMask;
+    private bool m_hitting;
+    private Collider m_previousHitObject;
 
     // Start is called before the first frame update
     void Start()
@@ -19,9 +21,18 @@ public class PlayerAimSystem : MonoBehaviour
         var ray = m_camera.ViewportPointToRay(new Vector2(.5f,.5f));
         if(Physics.Raycast(ray,out var hit, 10, m_layerMask))
         {
-            //Handle Object Selection
+            m_hitting = true;
+            m_previousHitObject = hit.collider;
+            hit.collider.gameObject.GetComponent<Interactables>().detect();
+        }
+        else if (m_previousHitObject!=null)
+        {
+            m_previousHitObject.GetComponent<Interactables>().reset();
+            m_hitting = false;
+            m_previousHitObject = null;
+
         }
     }
-
+    
     
 }
